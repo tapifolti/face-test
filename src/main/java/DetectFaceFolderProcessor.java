@@ -27,8 +27,7 @@ public class DetectFaceFolderProcessor implements FolderProcessor {
 
     @Override
     public boolean forEachFile(Path file) {
-        return faceAPI.detect(file) != null;
-
+        return !faceAPI.detect(file).isEmpty();
     }
 
     @Override
