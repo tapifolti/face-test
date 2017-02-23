@@ -48,6 +48,8 @@ public class ApacheHttpAPICall {
             request.setEntity(reqBinary);
 
             HttpResponse response = httpclient.execute(request);
+            System.out.print(response.getStatusLine().getStatusCode());
+            System.out.print(": ");
             HttpEntity entity = response.getEntity();
             if (entity == null) {
                 return "";
@@ -58,9 +60,7 @@ public class ApacheHttpAPICall {
 //            }
 //            String result = new BufferedReader(new InputStreamReader(content))
 //                    .lines().collect(Collectors.joining("\n"));
-            String jsonResp = EntityUtils.toString(entity);
-            System.out.println(jsonResp);
-            return getFaceId(jsonResp);
+            return getFaceId(EntityUtils.toString(entity));
         }
         catch (Exception e)
         {
@@ -68,15 +68,32 @@ public class ApacheHttpAPICall {
             return "";
         }
     }
-    private static String getFaceId(String jsonResp) {
-        //  "faceId": "c5c24a82-6845-4031-9d5d-978df9175426"
-        String idPattern = "\"faceId\": \"([0-9a-f-]){36}\"";
-        Pattern p = Pattern.compile(idPattern);
-        Matcher m = p.matcher(jsonResp);
-        if (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            return jsonResp.substring(start, end).substring(12, 12+36);
+
+
+    public static String getFaceId(String jsonResp) {
+        //  "faceId":"c5c24a82-6845-4031-9d5d-978df9175426"
+        // "error":{"code":"InvalidImageSize","message":"Image size is too small or too big."
+        // {"error":{"code":"BadArgument","message":"Request body is invalid."}}
+        // {"error":{"statusCode": 403,"message": "Out of call volume quota. Quota will be replenished in 2.12 days."}}
+        String idPattern = "\"faceId\":\"([0-9a-f-]){36}\"";
+        String errPattern = "\"error\":\\{\"(code|statusCode)\":(\"([A-Za-z]){1,100}\"|([0-9]){1,5}),\"message\":\"";
+        Pattern pId = Pattern.compile(idPattern);
+        Pattern pErr = Pattern.compile(errPattern);
+        Matcher mId = pId.matcher(jsonResp);
+        Matcher mErr = pErr.matcher(jsonResp);
+        if (mId.find()) {
+            int start = mId.start();
+            int end = mId.end();
+            String id = jsonResp.substring(start, end).substring(10, 10+36);
+            System.out.println(id);
+            return id;
+        } else if (mErr.find()) {
+            int start = mErr.end();
+            int end = jsonResp.indexOf("\"", start);
+            String error = jsonResp.substring(start, end);
+            System.out.println(error);
+        } else {
+            System.out.println(jsonResp);
         }
         return "";
     }

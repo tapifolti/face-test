@@ -51,6 +51,6 @@ public class DetectFaceFolderProcessor implements FolderProcessor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
 }

@@ -21,6 +21,7 @@ public class DetectFaceAPI {
 
         try {
             byte[] imageData = Files.readAllBytes(imageFile);
+            System.out.print(imageFile.toString() + ": ");
             faceID = ApacheHttpAPICall.call(imageData);
         } catch (IOException e) {
             e.printStackTrace();
