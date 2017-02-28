@@ -55,7 +55,7 @@ public class Verify {
         boolean same = false;
         for (int j=startVerify; j<succResult.length; j++) {
             System.out.println("Comparing: " + face.getFilePath() + " AND " + succResult[j].getFilePath());
-            boolean ret = false; // ApacheHttpVerifyAPICall.call(face.getFaceId(), succResult[j].getFaceId());
+            boolean ret = ApacheHttpVerifyAPICall.call(face.getFaceId(), succResult[j].getFaceId());
             same = same || ret;
             try {
                 Thread.sleep(2500); // otherwise the free quota is breached (20req/min, 30K/month)

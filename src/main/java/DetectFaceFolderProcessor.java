@@ -29,7 +29,7 @@ public class DetectFaceFolderProcessor implements FolderProcessor {
 
     @Override
     public String forEachFile(Path file) {
-        return "xxx"; // faceAPI.detect(file);
+        return faceAPI.detect(file);
     }
 
     @Override
