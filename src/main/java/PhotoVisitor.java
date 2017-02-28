@@ -17,8 +17,11 @@ public class PhotoVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        // TODO
         // exclude folder
+        if (dir.getFileName().toString().matches(processor.getExcludeFolderPattern())) {
+            return FileVisitResult.SKIP_SUBTREE;
+        }
+        // TODO
         // check if it contains files =>
         //   order by date modified
         //   call processor.forFirstFile -> result.addSuccessfullyProcessed or result.addFailedToProcess
@@ -31,8 +34,9 @@ public class PhotoVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         // TODO
         // exclude file
-        if (processor.forEachFile(file)) {
-            processor.getResult().addSuccessfullyProcessed(file);
+        String result = processor.forEachFile(file);
+        if (!result.isEmpty()) {
+            processor.getResult().addSuccessfullyProcessed(new FolderProcessor.Face(file, result));
         } else {
             processor.getResult().addFailedToProcess(file);
         }

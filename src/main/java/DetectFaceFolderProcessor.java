@@ -8,11 +8,13 @@ import java.nio.file.Path;
 public class DetectFaceFolderProcessor implements FolderProcessor {
 
     private String excludeFolderPattern;
+    @Override
     public String getExcludeFolderPattern() {
         return excludeFolderPattern;
     }
 
     private String excludeFilePattern;
+    @Override
     public String getExcludeFilePattern() {
         return excludeFilePattern;
     }
@@ -26,20 +28,20 @@ public class DetectFaceFolderProcessor implements FolderProcessor {
     }
 
     @Override
-    public boolean forEachFile(Path file) {
-        return !faceAPI.detect(file).isEmpty();
+    public String forEachFile(Path file) {
+        return "xxx"; // faceAPI.detect(file);
     }
 
     @Override
-    public boolean forFirstFile(Path file) {
+    public String forFirstFile(Path file) {
         // does nothing
-        return true;
+        return "";
     }
 
     @Override
-    public boolean forRandomFile(Path file) {
+    public String forRandomFile(Path file) {
         // does nothing
-        return true;
+        return "";
     }
 
     @Override

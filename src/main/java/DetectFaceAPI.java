@@ -5,8 +5,6 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.net.URI;
-import java.nio.file.Paths;
 
 /***
  * Detects face on the photo
@@ -22,7 +20,7 @@ public class DetectFaceAPI {
         try {
             byte[] imageData = Files.readAllBytes(imageFile);
             System.out.print(imageFile.toString() + ": ");
-            faceID = ApacheHttpAPICall.call(imageData);
+            faceID = ApacheHttpDetectAPICall.call(imageData);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -12,14 +12,35 @@ import java.util.List;
  */
 public interface FolderProcessor {
 
+    public static class Face {
+
+        public Face(Path filePath, String faceId) {
+            this.filePath = filePath;
+            this.faceId = faceId;
+        }
+
+        private Path    filePath;
+        public Path getFilePath() {
+            return filePath;
+        }
+        public Path getFilePathParent() {
+            return filePath.getParent();
+        }
+
+        private String  faceId;
+        public String getFaceId() {
+            return faceId;
+        }
+
+    }
     public static class ProcessedResult {
-        private List<Path> successfullyProcessed = new ArrayList<Path>();
-        public List<Path> getSuccessfullyProcessed() {
+        private List<Face> successfullyProcessed = new ArrayList<Face>();
+        public List<Face> getSuccessfullyProcessed() {
             return successfullyProcessed;
         }
 
-        public void addSuccessfullyProcessed(Path successfullyProcessedPath) {
-            successfullyProcessed.add(successfullyProcessedPath);
+        public void addSuccessfullyProcessed(Face face) {
+            successfullyProcessed.add(face);
         }
 
         private List<Path> failedToProcess = new ArrayList<Path>();
@@ -32,6 +53,9 @@ public interface FolderProcessor {
         }
     }
 
+    public String getExcludeFolderPattern();
+    public String getExcludeFilePattern();
+
     /***
      * call to get processor's result object
      * @return
@@ -43,21 +67,21 @@ public interface FolderProcessor {
      * @param file
      * @return
      */
-    public boolean forEachFile(Path file);
+    public String forEachFile(Path file);
 
     /***
      * call it for the first file (ordered by 'date modified') in each sub-folder
      * @param file
      * @return
      */
-    public boolean forFirstFile(Path file);
+    public String forFirstFile(Path file);
 
     /***
      * call it on a randomly chosen file
      * @param file
      * @return
      */
-    public boolean forRandomFile(Path file);
+    public String forRandomFile(Path file);
 
     /***
      * process files in the sub-folders of rootFolder
