@@ -73,7 +73,7 @@ public class ApacheHttpDetectAPICall {
         //  [{"faceId":"c5c24a82-6845-4031-9d5d-978df9175426"}]
         // "{error":{"code":"InvalidImageSize","message":"Image size is too small or too big."}}
         // {"error":{"code":"BadArgument","message":"Request body is invalid."}}
-        // {"error":{"statusCode": 403,"message": "Out of call volume quota. Quota will be replenished in 2.12 days."}}
+        // {"error":{"statusCode": 403,"message": "Out of checkIfSame volume quota. Quota will be replenished in 2.12 days."}}
         String idPattern = "\"faceId\":\"([0-9a-f-]){36}\"";
         String errPattern = "\"error\":\\{\"(code|statusCode)\":(\"([A-Za-z]){1,100}\"|([0-9]){1,5}),\"message\":\"";
         Pattern pId = Pattern.compile(idPattern);
@@ -101,7 +101,7 @@ public class ApacheHttpDetectAPICall {
         //  "[{faceId":"c5c24a82-6845-4031-9d5d-978df9175426","faceRectangle": {"width": 78,"height": 78,"left": 394,"top": 54}}]"
         // "{error":{"code":"InvalidImageSize","message":"Image size is too small or too big."}}"
         // {"error":{"code":"BadArgument","message":"Request body is invalid."}}
-        // {"error":{"statusCode": 403,"message": "Out of call volume quota. Quota will be replenished in 2.12 days."}}
+        // {"error":{"statusCode": 403,"message": "Out of checkIfSame volume quota. Quota will be replenished in 2.12 days."}}
         try {
             JSONArray resp = new JSONArray(jsonResp);
             JSONObject item = (JSONObject)resp.get(0);

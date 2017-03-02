@@ -7,6 +7,11 @@ import java.nio.file.Path;
  */
 public class DetectFaceFolderProcessor implements FolderProcessor {
 
+    public DetectFaceFolderProcessor(String excludeFolderPattern, String excludeFilePattern) {
+        this.excludeFolderPattern = excludeFolderPattern;
+        this.excludeFilePattern = excludeFilePattern;
+    }
+
     private String excludeFolderPattern;
     @Override
     public String getExcludeFolderPattern() {
@@ -20,12 +25,6 @@ public class DetectFaceFolderProcessor implements FolderProcessor {
     }
 
     DetectFaceAPI faceAPI = new DetectFaceAPI();
-
-    private ProcessedResult result = new ProcessedResult();
-    @Override
-    public ProcessedResult getResult() {
-        return result;
-    }
 
     @Override
     public String forEachFile(Path file) {
@@ -42,17 +41,5 @@ public class DetectFaceFolderProcessor implements FolderProcessor {
     public String forRandomFile(Path file) {
         // does nothing
         return "";
-    }
-
-    @Override
-    public ProcessedResult process(Path rootFolder, String excludeFolderPattern, String excludeFilePattern) {
-        this.excludeFolderPattern = excludeFolderPattern;
-        this.excludeFilePattern = excludeFilePattern;
-        try {
-            Files.walkFileTree(rootFolder, new PhotoVisitor(this));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 }

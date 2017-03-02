@@ -24,7 +24,7 @@ public class ApacheHttpVerifyAPICall {
     static final String FACEID1 = "FACEID1";
     static final String FACEID2 = "FACEID2";
     static String BODY = "{\"faceId1\":\"" + FACEID1 + "\",\"faceId2\":\"" + FACEID2 +"\"}";
-    public static boolean call(String faceId1, String faceId2)
+    public static boolean checkIfSame(String faceId1, String faceId2)
     {
         HttpClient httpclient = HttpClients.createDefault();
         try
@@ -61,8 +61,8 @@ public class ApacheHttpVerifyAPICall {
 
     public static boolean readResponse(String jsonResp) {
         // {"isIdentical":true,"confidence":0.9}
-        // {"error":{"code": "Unspecified", "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."}}
-        // {"error":{"statusCode": 403, "message": "Out of call volume quota. Quota will be replenished in 2.12 days."}}
+        // {"error":{"code": "Unspecified", "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to checkIfSame and provide the right key."}}
+        // {"error":{"statusCode": 403, "message": "Out of checkIfSame volume quota. Quota will be replenished in 2.12 days."}}
         String isIdenticalPattern = "\\{\"isIdentical\":";
         String confidencePattern = ",\"confidence\":";
         String errPattern = "\"error\":\\{\"(code|statusCode)\":(\"([A-Za-z]){1,100}\"|([0-9]){1,5}),\"message\":\"";
@@ -105,8 +105,8 @@ public class ApacheHttpVerifyAPICall {
 
     public static boolean readResponseJson(String jsonResp) {
         // {"isIdentical":true,"confidence":0.9}
-        // {"error":{"code": "Unspecified", "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."}}
-        // {"error":{"statusCode": 403, "message": "Out of call volume quota. Quota will be replenished in 2.12 days."}}
+        // {"error":{"code": "Unspecified", "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to checkIfSame and provide the right key."}}
+        // {"error":{"statusCode": 403, "message": "Out of checkIfSame volume quota. Quota will be replenished in 2.12 days."}}
         JSONObject resp = new JSONObject(jsonResp);
         try {
             boolean isIdentical = resp.getBoolean("isIdentical");

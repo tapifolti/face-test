@@ -10,7 +10,7 @@ public class ApacheHttpDetectAPICallTest {
     public void getFaceIdJson() throws Exception {
         String jsonResp = "[{\"faceId\":\"c5c24a82-6845-4031-9d5d-978df9175426\",\"faceRectangle\":{\"width\": 78,\"height\": 78,\"left\": 394,\"top\": 54}}]";
         String jsonRespErr1 = "{\"error\":{\"code\":\"BadArgument\",\"message\":\"Request body is invalid.\"}}";
-        String jsonRespErr2 = "{\"error\":{\"statusCode\":403,\"message\":\"Out of call volume quota. Quota will be replenished in 2.12 days.\"}}";
+        String jsonRespErr2 = "{\"error\":{\"statusCode\":403,\"message\":\"Out of checkIfSame volume quota. Quota will be replenished in 2.12 days.\"}}";
         String id = ApacheHttpDetectAPICall.getFaceIdJson(jsonResp);
         assertTrue(id.equals("c5c24a82-6845-4031-9d5d-978df9175426"));
         id = ApacheHttpDetectAPICall.getFaceIdJson(jsonRespErr1);
@@ -23,7 +23,7 @@ public class ApacheHttpDetectAPICallTest {
     public void getFaceId() throws Exception {
         String jsonResp = "[{\"faceId\":\"c5c24a82-6845-4031-9d5d-978df9175426\",\"faceRectangle\":{\"width\": 78,\"height\": 78,\"left\": 394,\"top\": 54}}]";
         String jsonRespErr1 = "{\"error\":{\"code\":\"BadArgument\",\"message\":\"Request body is invalid.\"}}";
-        String jsonRespErr2 = "{\"error\":{\"statusCode\":403,\"message\":\"Out of call volume quota. Quota will be replenished in 2.12 days.\"}}";
+        String jsonRespErr2 = "{\"error\":{\"statusCode\":403,\"message\":\"Out of checkIfSame volume quota. Quota will be replenished in 2.12 days.\"}}";
         String id = ApacheHttpDetectAPICall.getFaceId(jsonResp);
         assertTrue(id.equals("c5c24a82-6845-4031-9d5d-978df9175426"));
         id = ApacheHttpDetectAPICall.getFaceId(jsonRespErr1);

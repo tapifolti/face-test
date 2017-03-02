@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,15 @@ public interface FolderProcessor {
             return faceId;
         }
 
+        private int notIdenticalCnt = 0;
+        public int getNotIdenticalCnt() {
+            return notIdenticalCnt;
+        }
+        public void addNotIdenticalCnt() {
+            notIdenticalCnt++;
+        }
+
+
     }
     public static class ProcessedResult {
         private List<Face> successfullyProcessed = new ArrayList<Face>();
@@ -56,28 +67,27 @@ public interface FolderProcessor {
     public String getExcludeFolderPattern();
     public String getExcludeFilePattern();
 
-    /***
-     * call to get processor's result object
-     * @return
-     */
-    public ProcessedResult getResult();
+    ProcessedResult result = new ProcessedResult();
+    public default ProcessedResult getResult() {
+        return result;
+    }
 
     /***
-     * call it for each file in each subfolder
+     * checkIfSame it for each file in each subfolder
      * @param file
      * @return
      */
     public String forEachFile(Path file);
 
     /***
-     * call it for the first file (ordered by 'date modified') in each sub-folder
+     * checkIfSame it for the first file (ordered by 'date modified') in each sub-folder
      * @param file
      * @return
      */
     public String forFirstFile(Path file);
 
     /***
-     * call it on a randomly chosen file
+     * checkIfSame it on a randomly chosen file
      * @param file
      * @return
      */
@@ -89,8 +99,13 @@ public interface FolderProcessor {
      * excludes file if matches to the excludeFilePattern
      * enlists files ordered by 'date modified'
      * @param rootFolder
-     * @param excludeFolderPattern
-     * @param excludeFilePattern
      */
-    public ProcessedResult process(Path rootFolder, String excludeFolderPattern, String excludeFilePattern);
+    public default ProcessedResult process(Path rootFolder) {
+        try {
+            Files.walkFileTree(rootFolder, new PhotoVisitor(this));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }

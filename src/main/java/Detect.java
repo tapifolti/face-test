@@ -12,7 +12,6 @@ public class Detect {
             System.out.println("Detect rootFolder [excludeFolderPattern] [excludeFilePattern]");
             return;
         }
-        DetectFaceFolderProcessor processor = new DetectFaceFolderProcessor();
         String excludeFolderPattern = "";
         String excludeFilePattern = "";
         if (args.length >= 2) {
@@ -21,7 +20,8 @@ public class Detect {
         if (args.length == 3) {
             excludeFilePattern = args[2];
         }
-        FolderProcessor.ProcessedResult result = processor.process(Paths.get(args[0]), excludeFolderPattern, excludeFilePattern);
+        DetectFaceFolderProcessor processor = new DetectFaceFolderProcessor(excludeFolderPattern, excludeFilePattern);
+        FolderProcessor.ProcessedResult result = processor.process(Paths.get(args[0]));
         System.out.println("Failed to detect:");
         for (Path p : result.getFailedToProcess()) {
             System.out.println(p.toString());
