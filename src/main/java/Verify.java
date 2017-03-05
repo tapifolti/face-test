@@ -34,7 +34,7 @@ public class Verify {
         // TODO result.getSuccessfullyProcessed() split to arrays of same folder
         Map<Path, List<FolderProcessor.Face>> resultMap = result.getSuccessfullyProcessed().stream()
                 .collect(Collectors.groupingBy(FolderProcessor.Face::getFilePathParent));
-        // for each folder checkIfSame:
+        // for each folder createGroup:
         for ( Map.Entry<Path, List<FolderProcessor.Face>> item: resultMap.entrySet()) {
             System.out.println("Comparing folder: " + item.getKey().toString());
             processSimilars(item.getValue().toArray(new FolderProcessor.Face[item.getValue().size()]));

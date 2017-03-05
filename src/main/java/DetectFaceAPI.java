@@ -20,7 +20,7 @@ public class DetectFaceAPI {
         try {
             byte[] imageData = Files.readAllBytes(imageFile);
             System.out.print(imageFile.toString() + ": ");
-            faceID = ApacheHttpDetectAPICall.call(imageData);
+            faceID = ApacheHttpDetectAPICall.detectFace(imageData);
         } catch (IOException e) {
             e.printStackTrace();
         }

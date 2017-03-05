@@ -73,21 +73,21 @@ public interface FolderProcessor {
     }
 
     /***
-     * checkIfSame it for each file in each subfolder
+     * createGroup it for each file in each subfolder
      * @param file
      * @return
      */
     public String forEachFile(Path file);
 
     /***
-     * checkIfSame it for the first file (ordered by 'date modified') in each sub-folder
+     * createGroup it for the first file (ordered by 'date modified') in each sub-folder
      * @param file
      * @return
      */
     public String forFirstFile(Path file);
 
     /***
-     * checkIfSame it on a randomly chosen file
+     * createGroup it on a randomly chosen file
      * @param file
      * @return
      */
