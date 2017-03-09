@@ -1,3 +1,5 @@
+package com.tapifolti.facetest.folder;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,11 +16,11 @@ import java.util.List;
  */
 public interface FolderProcessor {
 
-    public static class Face {
+    public static class Item {
 
-        public Face(Path filePath, String faceId) {
+        public Item(Path filePath, String id) {
             this.filePath = filePath;
-            this.faceId = faceId;
+            this.id = id;
         }
 
         private Path    filePath;
@@ -29,9 +31,9 @@ public interface FolderProcessor {
             return filePath.getParent();
         }
 
-        private String  faceId;
-        public String getFaceId() {
-            return faceId;
+        private String id;
+        public String getId() {
+            return id;
         }
 
         private int notIdenticalCnt = 0;
@@ -45,12 +47,12 @@ public interface FolderProcessor {
 
     }
     public static class ProcessedResult {
-        private List<Face> successfullyProcessed = new ArrayList<Face>();
-        public List<Face> getSuccessfullyProcessed() {
+        private List<Item> successfullyProcessed = new ArrayList<Item>();
+        public List<Item> getSuccessfullyProcessed() {
             return successfullyProcessed;
         }
 
-        public void addSuccessfullyProcessed(Face face) {
+        public void addSuccessfullyProcessed(Item face) {
             successfullyProcessed.add(face);
         }
 

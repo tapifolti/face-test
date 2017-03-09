@@ -1,3 +1,5 @@
+package com.tapifolti.facetest.folder;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -48,7 +50,7 @@ public class PhotoVisitor extends SimpleFileVisitor<Path> {
 
     private void procResult(String result, Path file) {
         if (!result.isEmpty()) {
-            processor.getResult().addSuccessfullyProcessed(new FolderProcessor.Face(file, result));
+            processor.getResult().addSuccessfullyProcessed(new FolderProcessor.Item(file, result));
         } else {
             processor.getResult().addFailedToProcess(file);
         }
