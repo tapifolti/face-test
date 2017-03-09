@@ -1,8 +1,11 @@
+package com.tapifolti.facetest.apicall;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -18,24 +21,26 @@ import java.util.regex.Pattern;
  * Created by tapifolti on 2/22/2017.
  */
 // This sample uses the Apache HTTP client from HTTP Components (http://hc.apache.org/httpcomponents-client-ga/)
-public class ApacheHttpGetTrainingStatusAPICall {
+public class ApacheHttpVerifyAPICall {
 
-    enum TrainingStatus {notstarted, running, succeeded, failed, unspecified};
-    public static TrainingStatus getTrainingStatus(String group)
+    static final String FACEID1 = "FACEID1";
+    static final String FACEID2 = "FACEID2";
+    static String BODY = "{\"faceId1\":\"" + FACEID1 + "\",\"faceId2\":\"" + FACEID2 +"\"}";
+    public static boolean checkIfSame(String faceId1, String faceId2)
     {
         HttpClient httpclient = HttpClients.createDefault();
         try
         {
-            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}/training");
+            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/verify");
 
-            builder.setParameter("personGroupId", group);
             URI uri = builder.build();
             HttpPost request = new HttpPost(uri);
             request.setHeader("Content-Type", "application/json");
             request.setHeader("Ocp-Apim-Subscription-Key", APICall.SubscriptionKey);
 
             // Request body
-            StringEntity reqEntity = new StringEntity("");
+            // {"faceId1":"c5c24a82-6845-4031-9d5d-978df9175426","faceId2":"c5c24a82-6845-4031-9d5d-978df9020202"}
+            StringEntity reqEntity = new StringEntity(BODY.replace(FACEID1, faceId1).replace(FACEID2, faceId2));
             request.setEntity(reqEntity);
             long beforeConnectTime = System.currentTimeMillis();
             HttpResponse response = httpclient.execute(request);
@@ -44,29 +49,35 @@ public class ApacheHttpGetTrainingStatusAPICall {
             System.out.print((afterConnectTime-beforeConnectTime) + "msec: ");
             HttpEntity entity = response.getEntity();
             if (entity == null) {
-                return TrainingStatus.unspecified;
+                return false;
             }
             return readResponseJson(EntityUtils.toString(entity));
         }
         catch (Exception e)
         {
             System.out.println(e.getMessage());
-            return TrainingStatus.unspecified;
+            return false;
         }
     }
 
-
-    public static TrainingStatus readResponseJson(String jsonResp) {
-        // {"status":"succeeded","createdDateTime": "2015-05-15T13:45:30","lastActionDateTime": null,"message": null}
+    public static boolean readResponseJson(String jsonResp) {
+        // {"isIdentical":true,"confidence":0.9}
         // {"error":{"code": "Unspecified", "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to createGroup and provide the right key."}}
         // {"error":{"statusCode": 403, "message": "Out of createGroup volume quota. Quota will be replenished in 2.12 days."}}
-        JSONObject resp = null;
+        JSONObject resp = new JSONObject(jsonResp);
         try {
-            resp = new JSONObject(jsonResp);
-            String statusStr = resp.getString("status");
-            String messageStr = resp.getString("message");
-            System.out.println("Status: " + statusStr + ((messageStr != null)? (", Message: " + messageStr): ""));
-            return TrainingStatus.valueOf(statusStr);
+            boolean isIdentical = resp.getBoolean("isIdentical");
+            double confidence = resp.getDouble("confidence");
+            if (!isIdentical) {
+                System.out.println("notIdentical - confidence: " + confidence);
+            } else {
+                if (confidence < 0.5) {
+                    System.out.println("mayBeIdentical - confidence: " + confidence);
+                } else {
+                    System.out.println("isIdentical - confidence: " + confidence);
+                    return true;
+                }
+            }
         } catch (JSONException ex) {
             try {
                 JSONObject error = resp.getJSONObject("error");
@@ -76,6 +87,6 @@ public class ApacheHttpGetTrainingStatusAPICall {
                 System.out.println(jsonResp);
             }
         }
-        return TrainingStatus.unspecified;
+        return false;
     }
 }

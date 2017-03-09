@@ -1,3 +1,4 @@
+import com.tapifolti.facetest.apicall.ApacheHttpVerifyAPICall;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

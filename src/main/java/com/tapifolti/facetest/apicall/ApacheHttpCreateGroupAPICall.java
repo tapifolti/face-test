@@ -1,3 +1,5 @@
+package com.tapifolti.facetest.apicall;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,23 +22,29 @@ import java.util.regex.Pattern;
  * Created by tapifolti on 2/22/2017.
  */
 // This sample uses the Apache HTTP client from HTTP Components (http://hc.apache.org/httpcomponents-client-ga/)
-public class ApacheHttpTrainGroupAPICall {
+public class ApacheHttpCreateGroupAPICall {
 
-    public static boolean trainGroup(String group)
+    static final String NAME = "NAME";
+    static final String DATA = "DATA";
+    static String BODY = "{\"name\":\"" + NAME + "\",\"userData\":\"" + DATA + "\"}";
+    private static Random rand = new Random(System.currentTimeMillis());
+    // returns groupID
+    public static String createGroup(String name, String data)
     {
         HttpClient httpclient = HttpClients.createDefault();
         try
         {
-            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}/train");
-
-            builder.setParameter("personGroupId", group);
+            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}");
+            // generate: numbers, English letters in lower case, '-' and '_'. The maximum length of the personGroupId is 64
+            String groupId = "persongroup_" + rand.nextInt();
+            builder.setParameter("personGroupId", groupId);
             URI uri = builder.build();
             HttpPost request = new HttpPost(uri);
             request.setHeader("Content-Type", "application/json");
             request.setHeader("Ocp-Apim-Subscription-Key", APICall.SubscriptionKey);
 
             // Request body
-            StringEntity reqEntity = new StringEntity("");
+            StringEntity reqEntity = new StringEntity(BODY.replace(NAME, name).replace(DATA, data));
             request.setEntity(reqEntity);
             long beforeConnectTime = System.currentTimeMillis();
             HttpResponse response = httpclient.execute(request);
@@ -43,8 +52,9 @@ public class ApacheHttpTrainGroupAPICall {
             System.out.print("HTTP" + response.getStatusLine().getStatusCode() + ": ");
             System.out.print((afterConnectTime-beforeConnectTime) + "msec: ");
             HttpEntity entity = response.getEntity();
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_ACCEPTED) {
-                return true;
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                System.out.println("OK");
+                return groupId;
             } else if (entity != null) {
                 readResponseJson(EntityUtils.toString(entity));
             }
@@ -53,9 +63,8 @@ public class ApacheHttpTrainGroupAPICall {
         {
             System.out.println(e.getMessage());
         }
-        return false;
+        return "";
     }
-
 
     public static void readResponseJson(String jsonResp) {
         // {"error":{"code": "Unspecified", "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to createGroup and provide the right key."}}

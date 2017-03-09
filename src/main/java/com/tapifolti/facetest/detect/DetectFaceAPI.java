@@ -1,6 +1,8 @@
-/**
+package com.tapifolti.facetest.detect; /**
  * Created by tapifolti on 2/17/2017.
  */
+
+import com.tapifolti.facetest.apicall.ApacheHttpDetectAPICall;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +24,7 @@ public class DetectFaceAPI {
             System.out.print(imageFile.toString() + ": ");
             faceID = ApacheHttpDetectAPICall.detectFace(imageData);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return faceID;
     }

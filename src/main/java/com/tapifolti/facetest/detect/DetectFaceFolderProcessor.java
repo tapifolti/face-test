@@ -1,6 +1,7 @@
-import java.io.IOException;
-import java.nio.file.Files;
+package com.tapifolti.facetest.detect;
+
 import java.nio.file.Path;
+import com.tapifolti.facetest.folder.FolderProcessor;
 
 /**
  * Created by tapifolti on 2/17/2017.

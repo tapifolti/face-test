@@ -1,8 +1,13 @@
+package com.tapifolti.facetest.detect;
+
+import com.tapifolti.facetest.apicall.ApacheHttpVerifyAPICall;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import com.tapifolti.facetest.folder.FolderProcessor;
 
 /**
  * Created by tapifolti on 2/24/2017.
@@ -11,7 +16,7 @@ public class Verify {
     public static void main(String[] args) {
 
         if (args.length < 1 || args.length > 3) {
-            System.out.println("Detect rootFolder [excludeFolderPattern] [excludeFilePattern]");
+            System.out.println("com.tapifolti.facetest.detect.Detect rootFolder [excludeFolderPattern] [excludeFilePattern]");
             return;
         }
         String excludeFolderPattern = "";
@@ -29,24 +34,24 @@ public class Verify {
             System.out.println(p.toString());
         }
         System.out.println("Comparing Successfully processed items:");
-        // FolderProcessor.Face[] succResult = result.getSuccessfullyProcessed().toArray(new FolderProcessor.Face[result.getSuccessfullyProcessed().size()]);
+        // com.tapifolti.facetest.folder.FolderProcessor.Item[] succResult = result.getSuccessfullyProcessed().toArray(new com.tapifolti.facetest.folder.FolderProcessor.Item[result.getSuccessfullyProcessed().size()]);
         // processSimilars(succResult);
         // TODO result.getSuccessfullyProcessed() split to arrays of same folder
-        Map<Path, List<FolderProcessor.Face>> resultMap = result.getSuccessfullyProcessed().stream()
-                .collect(Collectors.groupingBy(FolderProcessor.Face::getFilePathParent));
+        Map<Path, List<FolderProcessor.Item>> resultMap = result.getSuccessfullyProcessed().stream()
+                .collect(Collectors.groupingBy(FolderProcessor.Item::getFilePathParent));
         // for each folder createGroup:
-        for ( Map.Entry<Path, List<FolderProcessor.Face>> item: resultMap.entrySet()) {
+        for ( Map.Entry<Path, List<FolderProcessor.Item>> item: resultMap.entrySet()) {
             System.out.println("Comparing folder: " + item.getKey().toString());
-            processSimilars(item.getValue().toArray(new FolderProcessor.Face[item.getValue().size()]));
+            processSimilars(item.getValue().toArray(new FolderProcessor.Item[item.getValue().size()]));
             item.getValue().sort((f1,f2)-> -1*Integer.compare(f1.getNotIdenticalCnt(),f2.getNotIdenticalCnt()));
             System.out.println("Worst matches:");
-            for (FolderProcessor.Face f : item.getValue()) {
+            for (FolderProcessor.Item f : item.getValue()) {
                 System.out.println(Integer.toString(f.getNotIdenticalCnt()) + " : " +f.getFilePath());
             }
         }
     }
 
-    private static void processSimilars(FolderProcessor.Face[] similars) {
+    private static void processSimilars(FolderProcessor.Item[] similars) {
         for (int i = 0; i < similars.length - 1; i++) {
             if (isItNotUnique(similars, similars[i], i + 1)) {
                 System.out.println("It is not unique!: " + similars[i].getFilePath());
@@ -54,11 +59,11 @@ public class Verify {
         }
     }
 
-    private static boolean isItNotUnique(FolderProcessor.Face[] succResult, FolderProcessor.Face face, int startVerify) {
+    private static boolean isItNotUnique(FolderProcessor.Item[] succResult, FolderProcessor.Item face, int startVerify) {
         boolean same = false;
         for (int j=startVerify; j<succResult.length; j++) {
             System.out.println("Comparing: " + face.getFilePath().getFileName() + " -AND- " + succResult[j].getFilePath().getFileName());
-            boolean isSame = ApacheHttpVerifyAPICall.checkIfSame(face.getFaceId(), succResult[j].getFaceId());
+            boolean isSame = ApacheHttpVerifyAPICall.checkIfSame(face.getId(), succResult[j].getId());
             if (!isSame) {
                 face.addNotIdenticalCnt();
                 succResult[j].addNotIdenticalCnt();

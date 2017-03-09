@@ -1,13 +1,13 @@
+package com.tapifolti.facetest.apicall;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,31 +20,25 @@ import java.util.regex.Pattern;
  * Created by tapifolti on 2/22/2017.
  */
 // This sample uses the Apache HTTP client from HTTP Components (http://hc.apache.org/httpcomponents-client-ga/)
-public class ApacheHttpAddPersonFaceAPICall {
-    // returns persistedFaceId
-    public static String addFace(String group, String person, byte[] imageData)
+public class ApacheHttpGetTrainingStatusAPICall {
+
+    public enum TrainingStatus {notstarted, running, succeeded, failed, unspecified};
+    public static TrainingStatus getTrainingStatus(String group)
     {
         HttpClient httpclient = HttpClients.createDefault();
-
         try
         {
-            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces[?userData][&targetFace]");
+            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}/training");
 
             builder.setParameter("personGroupId", group);
-            builder.setParameter("personId", person);
-
             URI uri = builder.build();
             HttpPost request = new HttpPost(uri);
-            request.setHeader("Content-Type", "application/octet-stream");
+            request.setHeader("Content-Type", "application/json");
             request.setHeader("Ocp-Apim-Subscription-Key", APICall.SubscriptionKey);
 
-
             // Request body
-            //StringEntity reqEntity = new StringEntity("{body}");
-            ByteArrayEntity reqBinary = new ByteArrayEntity(imageData);
-            request.setEntity(reqBinary);
-
-            System.out.print(imageData.length/1024 + "KB: ");
+            StringEntity reqEntity = new StringEntity("");
+            request.setEntity(reqEntity);
             long beforeConnectTime = System.currentTimeMillis();
             HttpResponse response = httpclient.execute(request);
             long afterConnectTime = System.currentTimeMillis();
@@ -52,31 +46,35 @@ public class ApacheHttpAddPersonFaceAPICall {
             System.out.print((afterConnectTime-beforeConnectTime) + "msec: ");
             HttpEntity entity = response.getEntity();
             if (entity == null) {
-                return "";
+                return TrainingStatus.unspecified;
             }
-            return getFaceIdJson(EntityUtils.toString(entity));
+            return readResponseJson(EntityUtils.toString(entity));
         }
         catch (Exception e)
         {
             System.out.println(e.getMessage());
-            return "";
+            return TrainingStatus.unspecified;
         }
     }
 
 
-    public static String getFaceIdJson(String jsonResp) {
-        //  "{"persistedFaceId": "B8D802CF-DD8F-4E61-B15C-9E6C5844CCBA"}"
-        // "{error":{"code":"InvalidImageSize","message":"Image size is too small or too big."}}"
-        // {"error":{"code":"BadArgument","message":"Request body is invalid."}}
-        // {"error":{"statusCode": 403,"message": "Out of createGroup volume quota. Quota will be replenished in 2.12 days."}}
+    public static TrainingStatus readResponseJson(String jsonResp) {
+        // {"status":"succeeded","createdDateTime": "2015-05-15T13:45:30","lastActionDateTime": null,"message": null}
+        // {"error":{"code": "Unspecified", "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to createGroup and provide the right key."}}
+        // {"error":{"statusCode": 403, "message": "Out of createGroup volume quota. Quota will be replenished in 2.12 days."}}
+        JSONObject resp = null;
         try {
-            JSONObject resp = new JSONObject(jsonResp);
-            String persistedFaceId = resp.getString("persistedFaceId");
-            System.out.println(persistedFaceId);
-            return persistedFaceId;
+            resp = new JSONObject(jsonResp);
+            String statusStr = resp.getString("status");
+            String messageStr = "";
+            TrainingStatus ret = TrainingStatus.valueOf(statusStr);
+            if (ret.equals(TrainingStatus.failed)) {
+                messageStr = resp.getString("message");
+            }
+            System.out.println("Status: " + statusStr + ", Message: " + messageStr);
+            return ret;
         } catch (JSONException ex) {
             try {
-                JSONObject resp = new JSONObject(jsonResp);
                 JSONObject error = resp.getJSONObject("error");
                 String message = error.getString("message");
                 System.out.println(message);
@@ -84,7 +82,6 @@ public class ApacheHttpAddPersonFaceAPICall {
                 System.out.println(jsonResp);
             }
         }
-        return "";
+        return TrainingStatus.unspecified;
     }
-
 }
