@@ -13,8 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**

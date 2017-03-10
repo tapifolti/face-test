@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by tapifolti on 2/17/2017.
@@ -23,12 +25,9 @@ public interface FolderProcessor {
             this.id = id;
         }
 
-        private Path    filePath;
+        private Path filePath;
         public Path getFilePath() {
             return filePath;
-        }
-        public Path getFilePathParent() {
-            return filePath.getParent();
         }
 
         private String id;
@@ -47,13 +46,31 @@ public interface FolderProcessor {
 
     }
     public static class ProcessedResult {
-        private List<Item> successfullyProcessed = new ArrayList<Item>();
-        public List<Item> getSuccessfullyProcessed() {
+        private Map<String, List<Item>> successfullyProcessed = new HashMap<>();
+        private Map<String, String> idToPerson = new HashMap<>();
+        public Map<String, List<Item>> getSuccessfullyProcessed() {
             return successfullyProcessed;
         }
 
         public void addSuccessfullyProcessed(Item face) {
-            successfullyProcessed.add(face);
+            String person = face.getFilePath().getParent().getFileName().toString();
+            List<Item> list = null;
+            if (successfullyProcessed.containsKey(person)) {
+                list = successfullyProcessed.get(person);
+            } else {
+                list = new ArrayList<>();
+                successfullyProcessed.put(person, list);
+            }
+            list.add(face);
+            idToPerson.put(face.getId(), person);
+        }
+
+        public List<Item> getItemsForPerson(String person) {
+            return successfullyProcessed.get(person);
+        }
+
+        public String getPersonById(String id) {
+            return idToPerson.get(id);
         }
 
         private List<Path> failedToProcess = new ArrayList<Path>();

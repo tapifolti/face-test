@@ -4,7 +4,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
@@ -14,8 +14,6 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -34,12 +32,12 @@ public class ApacheHttpCreateGroupAPICall {
         HttpClient httpclient = HttpClients.createDefault();
         try
         {
-            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}");
             // generate: numbers, English letters in lower case, '-' and '_'. The maximum length of the personGroupId is 64
-            String groupId = "persongroup_" + rand.nextInt();
-            builder.setParameter("personGroupId", groupId);
+            String groupId = "persongroup_" + rand.nextInt(100000);
+            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/" + groupId );
+
             URI uri = builder.build();
-            HttpPost request = new HttpPost(uri);
+            HttpPut request = new HttpPut(uri);
             request.setHeader("Content-Type", "application/json");
             request.setHeader("Ocp-Apim-Subscription-Key", APICall.SubscriptionKey);
 
@@ -53,7 +51,7 @@ public class ApacheHttpCreateGroupAPICall {
             System.out.print((afterConnectTime-beforeConnectTime) + "msec: ");
             HttpEntity entity = response.getEntity();
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                System.out.println("OK");
+                System.out.println("'" + groupId + "' group successfully created");
                 return groupId;
             } else if (entity != null) {
                 readResponseJson(EntityUtils.toString(entity));

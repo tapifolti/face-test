@@ -25,11 +25,9 @@ public class DetectFaceFolderProcessor implements FolderProcessor {
         return excludeFilePattern;
     }
 
-    DetectFaceAPI faceAPI = new DetectFaceAPI();
-
     @Override
     public String forEachFile(Path file) {
-        return faceAPI.detect(file);
+        return DetectFaceAPI.detect(file);
     }
 
     @Override

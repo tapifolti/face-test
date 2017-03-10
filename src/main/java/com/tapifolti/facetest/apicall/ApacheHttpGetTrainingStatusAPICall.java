@@ -3,17 +3,14 @@ package com.tapifolti.facetest.apicall;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -28,17 +25,13 @@ public class ApacheHttpGetTrainingStatusAPICall {
         HttpClient httpclient = HttpClients.createDefault();
         try
         {
-            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}/training");
+            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/" + group + "/training");
 
-            builder.setParameter("personGroupId", group);
             URI uri = builder.build();
-            HttpPost request = new HttpPost(uri);
-            request.setHeader("Content-Type", "application/json");
+            HttpGet request = new HttpGet(uri);
             request.setHeader("Ocp-Apim-Subscription-Key", APICall.SubscriptionKey);
 
             // Request body
-            StringEntity reqEntity = new StringEntity("");
-            request.setEntity(reqEntity);
             long beforeConnectTime = System.currentTimeMillis();
             HttpResponse response = httpclient.execute(request);
             long afterConnectTime = System.currentTimeMillis();

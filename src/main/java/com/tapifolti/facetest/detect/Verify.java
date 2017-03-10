@@ -34,14 +34,10 @@ public class Verify {
             System.out.println(p.toString());
         }
         System.out.println("Comparing Successfully processed items:");
-        // com.tapifolti.facetest.folder.FolderProcessor.Item[] succResult = result.getSuccessfullyProcessed().toArray(new com.tapifolti.facetest.folder.FolderProcessor.Item[result.getSuccessfullyProcessed().size()]);
-        // processSimilars(succResult);
-        // TODO result.getSuccessfullyProcessed() split to arrays of same folder
-        Map<Path, List<FolderProcessor.Item>> resultMap = result.getSuccessfullyProcessed().stream()
-                .collect(Collectors.groupingBy(FolderProcessor.Item::getFilePathParent));
-        // for each folder createGroup:
-        for ( Map.Entry<Path, List<FolderProcessor.Item>> item: resultMap.entrySet()) {
-            System.out.println("Comparing folder: " + item.getKey().toString());
+        Map<String, List<FolderProcessor.Item>> resultMap = result.getSuccessfullyProcessed();
+        // for each folder
+        for ( Map.Entry<String, List<FolderProcessor.Item>> item: resultMap.entrySet()) {
+            System.out.println("Comparing folder: " + item.getKey());
             processSimilars(item.getValue().toArray(new FolderProcessor.Item[item.getValue().size()]));
             item.getValue().sort((f1,f2)-> -1*Integer.compare(f1.getNotIdenticalCnt(),f2.getNotIdenticalCnt()));
             System.out.println("Worst matches:");

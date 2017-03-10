@@ -2,11 +2,14 @@ package com.tapifolti.facetest.train;
 
 import com.tapifolti.facetest.apicall.ApacheHttpAddPersonFaceAPICall;
 import com.tapifolti.facetest.apicall.ApacheHttpCreatePersonAPICall;
+import com.tapifolti.facetest.apicall.ApacheHttpIdentifyAPICall;
+import com.tapifolti.facetest.detect.DetectFaceAPI;
 import com.tapifolti.facetest.folder.FolderProcessor;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Created by tapifolti on 2/17/2017.
@@ -33,21 +36,61 @@ public class TrainAndIdentifyFolderProcessor implements FolderProcessor {
     private String groupId;
     @Override
     public String getExcludeFolderPattern() {return excludeFolderPattern;}
+    public void setExcludeFolderPattern(String pattern) {excludeFolderPattern = pattern;}
+
     @Override
     public String getExcludeFilePattern() {
         return excludeFilePattern;
+    }
+    public void setExcludeFilePattern(String pattern) {excludeFilePattern = pattern;}
+
+    private void checkIfFound(String person, String personID) {
+        //  checks if the correct Person was found
+        if (personID == null || personID.isEmpty()) {
+            //  nobody was identified => ok if not trained folder
+            List<Item> trained = getResult().getItemsForPerson(person);
+            if (trained == null) {
+                System.out.println("OK: Successfully Unidentified!");
+            } else {
+                System.out.println("NOT_OK: Failed to identify! person: '" + person);
+            }
+            return;
+        }
+        // if the correct person was identified
+        String identifiedPerson = getResult().getPersonById(personID);
+        if (identifiedPerson != null) {
+            if (identifiedPerson.equals(person)) {
+                System.out.println("OK: Successfully identified!");
+            } else {
+                System.out.println("NOT_OK: Unsuccessfully identified! person: '" + person + "' but identified: '" + identifiedPerson + "'");
+            }
+        } else {
+            System.out.println("ERROR: Unknown personId!");
+        }
     }
 
     @Override
     public String forEachFile(Path file)
     {
-        // TODO
+        if (getPhase().equals(Phases.IDENTIFY)) {
+            String person = file.getParent().getFileName().toString();
+            // calls detect for the photo
+            String faceId = DetectFaceAPI.detect(file);
+            // calls Identify
+            System.out.print("Identify: ");
+            String personID = ApacheHttpIdentifyAPICall.checkIfSame(faceId, groupId);
+            checkIfFound(person, personID);
+        }
         return "";
     }
 
     @Override
     public String forFirstFile(Path file) {
-        // TODO
+        // do nothing
+        if (getPhase().equals(Phases.IDENTIFY)) {
+            String person = file.getParent().getFileName().toString();
+            System.out.println("Processing folder: " + person);
+        }
         return "";
     }
 

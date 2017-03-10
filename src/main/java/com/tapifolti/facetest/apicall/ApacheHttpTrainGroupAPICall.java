@@ -13,8 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -28,9 +26,8 @@ public class ApacheHttpTrainGroupAPICall {
         HttpClient httpclient = HttpClients.createDefault();
         try
         {
-            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}/train");
+            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/" + group + "/train");
 
-            builder.setParameter("personGroupId", group);
             URI uri = builder.build();
             HttpPost request = new HttpPost(uri);
             request.setHeader("Content-Type", "application/json");
@@ -46,6 +43,7 @@ public class ApacheHttpTrainGroupAPICall {
             System.out.print((afterConnectTime-beforeConnectTime) + "msec: ");
             HttpEntity entity = response.getEntity();
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_ACCEPTED) {
+                System.out.println("OK");
                 return true;
             } else if (entity != null) {
                 readResponseJson(EntityUtils.toString(entity));

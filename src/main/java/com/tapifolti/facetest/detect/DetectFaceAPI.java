@@ -16,7 +16,7 @@ import java.nio.file.Path;
 public class DetectFaceAPI {
 
 
-    public String detect(Path imageFile) {
+    public static String detect(Path imageFile) {
         String faceID = "";
 
         try {

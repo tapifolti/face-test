@@ -6,16 +6,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -30,10 +26,8 @@ public class ApacheHttpAddPersonFaceAPICall {
 
         try
         {
-            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}/persons/{personId}/persistedFaces[?userData][&targetFace]");
-
-            builder.setParameter("personGroupId", group);
-            builder.setParameter("personId", person);
+            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/" + group +
+                    "/persons/" + person + "/persistedFaces");
 
             URI uri = builder.build();
             HttpPost request = new HttpPost(uri);

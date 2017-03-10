@@ -12,8 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -31,9 +29,8 @@ public class ApacheHttpCreatePersonAPICall {
         HttpClient httpclient = HttpClients.createDefault();
         try
         {
-            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/{personGroupId}/persons");
+            URIBuilder builder = new URIBuilder("https://westus.api.cognitive.microsoft.com/face/v1.0/persongroups/" +group + "/persons");
 
-            builder.setParameter("personGroupId", group);
             URI uri = builder.build();
             HttpPost request = new HttpPost(uri);
             request.setHeader("Content-Type", "application/json");
