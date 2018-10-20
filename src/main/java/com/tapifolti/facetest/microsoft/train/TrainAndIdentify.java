@@ -1,15 +1,12 @@
-package com.tapifolti.facetest.train;
+package com.tapifolti.facetest.microsoft.train;
 
-import com.tapifolti.facetest.apicall.ApacheHttpCreateGroupAPICall;
-import com.tapifolti.facetest.apicall.ApacheHttpGetTrainingStatusAPICall;
-import com.tapifolti.facetest.apicall.ApacheHttpTrainGroupAPICall;
+import com.tapifolti.facetest.microsoft.apicall.CreateGroupAPICall;
+import com.tapifolti.facetest.microsoft.apicall.CreatePersonAPICall;
+import com.tapifolti.facetest.microsoft.apicall.GetTrainingStatusAPICall;
+import com.tapifolti.facetest.microsoft.apicall.TrainGroupAPICall;
 import com.tapifolti.facetest.folder.FolderProcessor;
-import org.apache.http.HttpResponse;
 
 import java.nio.file.Paths;
-
-import static com.tapifolti.facetest.apicall.ApacheHttpGetTrainingStatusAPICall.TrainingStatus.running;
-import static com.tapifolti.facetest.apicall.ApacheHttpGetTrainingStatusAPICall.TrainingStatus.succeeded;
 
 /**
  * Created by tapifolti on 3/2/2017.
@@ -32,23 +29,34 @@ public class TrainAndIdentify {
         // create PersonGroup
         String group = "allfriends";
         System.out.print("Group: " + group + ": ");
-        String groupId = ApacheHttpCreateGroupAPICall.createGroup(group, "");
+        String groupId = CreateGroupAPICall.createGroup(group, "");
         TrainAndIdentifyFolderProcessor processor = new TrainAndIdentifyFolderProcessor(excludeFolderPattern, excludeFilePattern, groupId);
         // takes one random photo from each not excluded folder
         //  - create Person -> stores PersonId for folder
         //  - calls AddPersonFace
         FolderProcessor.ProcessedResult result = processor.process(Paths.get(args[0]));
+        // Add empty Persons for test
+        for (int i=0; i<5; i++) {
+            String person = "testperson_" + CreateGroupAPICall.rand.nextInt(100000);
+            System.out.print("Person: " + person + ": ");
+            String personId = CreatePersonAPICall.createPerson(groupId, person, "");
+        }
         // TrainPersonGroup -> GetPersonGroupTrainingStatus (duration?)
+        try { // rate limit
+            Thread.currentThread().sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.print("Start Training for Group: " + groupId + ": ");
         long beforeConnectTime = System.currentTimeMillis();
-        boolean succ= ApacheHttpTrainGroupAPICall.trainGroup(groupId);
+        boolean succ= TrainGroupAPICall.trainGroup(groupId);
         if (!succ) {
             return;
         }
         boolean pending = true;
         while (pending) {
             System.out.print("Get Training Satus ");
-            ApacheHttpGetTrainingStatusAPICall.TrainingStatus status = ApacheHttpGetTrainingStatusAPICall.getTrainingStatus(groupId);
+            GetTrainingStatusAPICall.TrainingStatus status = GetTrainingStatusAPICall.getTrainingStatus(groupId);
             switch (status) {
                 case notstarted:
                 case succeeded:
@@ -60,13 +68,18 @@ public class TrainAndIdentify {
                     break;
             }
             try {
-                Thread.sleep(500);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
         }
         long afterConnectTime = System.currentTimeMillis();
         System.out.println("Training took for: " + (afterConnectTime-beforeConnectTime) + "msec");
+        try { // rate limit
+            Thread.currentThread().sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         processor.setPhase(TrainAndIdentifyFolderProcessor.Phases.IDENTIFY);
         processor.setExcludeFolderPattern("");
         processor.setExcludeFilePattern("");

@@ -1,9 +1,9 @@
-package com.tapifolti.facetest.train;
+package com.tapifolti.facetest.microsoft.train;
 
-import com.tapifolti.facetest.apicall.ApacheHttpAddPersonFaceAPICall;
-import com.tapifolti.facetest.apicall.ApacheHttpCreatePersonAPICall;
-import com.tapifolti.facetest.apicall.ApacheHttpIdentifyAPICall;
-import com.tapifolti.facetest.detect.DetectFaceAPI;
+import com.tapifolti.facetest.microsoft.apicall.AddPersonFaceAPICall;
+import com.tapifolti.facetest.microsoft.apicall.CreatePersonAPICall;
+import com.tapifolti.facetest.microsoft.apicall.IdentifyAPICall;
+import com.tapifolti.facetest.microsoft.detect.DetectFaceAPI;
 import com.tapifolti.facetest.folder.FolderProcessor;
 
 import java.io.IOException;
@@ -76,10 +76,20 @@ public class TrainAndIdentifyFolderProcessor implements FolderProcessor {
             String person = file.getParent().getFileName().toString();
             // calls detect for the photo
             String faceId = DetectFaceAPI.detect(file);
+            try {
+                Thread.currentThread().sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             // calls Identify
             System.out.print("Identify: ");
-            String personID = ApacheHttpIdentifyAPICall.checkIfSame(faceId, groupId);
+            String personID = IdentifyAPICall.checkIfSame(faceId, groupId);
             checkIfFound(person, personID);
+            try {
+                Thread.currentThread().sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return "";
     }
@@ -100,12 +110,12 @@ public class TrainAndIdentifyFolderProcessor implements FolderProcessor {
             //  - create Person -> stores PersonId for folder
             String person = file.getParent().getFileName().toString();
             System.out.print("Person: " + person + ": ");
-            String personId = ApacheHttpCreatePersonAPICall.createPerson(groupId, person, "");
+            String personId = CreatePersonAPICall.createPerson(groupId, person, "");
             //  - calls AddPersonFace
             try {
                 System.out.print(file.toString() + ": ");
                 byte[] imageData = Files.readAllBytes(file);
-                String persistedFaceId = ApacheHttpAddPersonFaceAPICall.addPersonFace(groupId, personId, imageData);
+                String persistedFaceId = AddPersonFaceAPICall.addPersonFace(groupId, personId, imageData);
                 return personId;
             } catch (IOException e) {
                 System.out.println(e.getMessage());

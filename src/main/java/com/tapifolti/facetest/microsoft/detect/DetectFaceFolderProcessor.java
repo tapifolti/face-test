@@ -1,4 +1,4 @@
-package com.tapifolti.facetest.detect;
+package com.tapifolti.facetest.microsoft.detect;
 
 import java.nio.file.Path;
 import com.tapifolti.facetest.folder.FolderProcessor;

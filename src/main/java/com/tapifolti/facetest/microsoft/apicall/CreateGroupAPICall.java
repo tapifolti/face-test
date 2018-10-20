@@ -1,4 +1,4 @@
-package com.tapifolti.facetest.apicall;
+package com.tapifolti.facetest.microsoft.apicall;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,12 +20,12 @@ import java.util.Random;
  * Created by tapifolti on 2/22/2017.
  */
 // This sample uses the Apache HTTP client from HTTP Components (http://hc.apache.org/httpcomponents-client-ga/)
-public class ApacheHttpCreateGroupAPICall {
+public class CreateGroupAPICall {
 
     static final String NAME = "NAME";
     static final String DATA = "DATA";
     static String BODY = "{\"name\":\"" + NAME + "\",\"userData\":\"" + DATA + "\"}";
-    private static Random rand = new Random(System.currentTimeMillis());
+    public static Random rand = new Random(System.currentTimeMillis());
     // returns groupID
     public static String createGroup(String name, String data)
     {

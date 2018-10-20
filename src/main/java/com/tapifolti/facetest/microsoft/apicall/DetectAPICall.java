@@ -1,4 +1,4 @@
-package com.tapifolti.facetest.apicall;
+package com.tapifolti.facetest.microsoft.apicall;
 
 import java.net.URI;
 
@@ -18,7 +18,7 @@ import org.json.JSONObject;
  * Created by tapifolti on 2/22/2017.
  */
 // This sample uses the Apache HTTP client from HTTP Components (http://hc.apache.org/httpcomponents-client-ga/)
-public class ApacheHttpDetectAPICall {
+public class DetectAPICall {
     public static String detectFace(byte[] imageData)
     {
         HttpClient httpclient = HttpClients.createDefault();

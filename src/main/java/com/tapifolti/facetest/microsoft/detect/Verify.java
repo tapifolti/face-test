@@ -1,12 +1,12 @@
-package com.tapifolti.facetest.detect;
+package com.tapifolti.facetest.microsoft.detect;
 
-import com.tapifolti.facetest.apicall.ApacheHttpVerifyAPICall;
+import com.tapifolti.facetest.microsoft.apicall.VerifyAPICall;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 import com.tapifolti.facetest.folder.FolderProcessor;
 
 /**
@@ -16,7 +16,7 @@ public class Verify {
     public static void main(String[] args) {
 
         if (args.length < 1 || args.length > 3) {
-            System.out.println("com.tapifolti.facetest.detect.Detect rootFolder [excludeFolderPattern] [excludeFilePattern]");
+            System.out.println("Verify rootFolder [excludeFolderPattern] [excludeFilePattern]");
             return;
         }
         String excludeFolderPattern = "";
@@ -59,7 +59,7 @@ public class Verify {
         boolean same = false;
         for (int j=startVerify; j<succResult.length; j++) {
             System.out.println("Comparing: " + face.getFilePath().getFileName() + " -AND- " + succResult[j].getFilePath().getFileName());
-            boolean isSame = ApacheHttpVerifyAPICall.checkIfSame(face.getId(), succResult[j].getId());
+            boolean isSame = VerifyAPICall.checkIfSame(face.getId(), succResult[j].getId());
             if (!isSame) {
                 face.addNotIdenticalCnt();
                 succResult[j].addNotIdenticalCnt();

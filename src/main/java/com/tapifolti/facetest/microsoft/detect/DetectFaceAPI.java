@@ -1,8 +1,8 @@
-package com.tapifolti.facetest.detect; /**
+package com.tapifolti.facetest.microsoft.detect; /**
  * Created by tapifolti on 2/17/2017.
  */
 
-import com.tapifolti.facetest.apicall.ApacheHttpDetectAPICall;
+import com.tapifolti.facetest.microsoft.apicall.DetectAPICall;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +22,7 @@ public class DetectFaceAPI {
         try {
             byte[] imageData = Files.readAllBytes(imageFile);
             System.out.print(imageFile.toString() + ": ");
-            faceID = ApacheHttpDetectAPICall.detectFace(imageData);
+            faceID = DetectAPICall.detectFace(imageData);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

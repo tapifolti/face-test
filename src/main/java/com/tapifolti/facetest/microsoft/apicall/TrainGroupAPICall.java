@@ -1,4 +1,4 @@
-package com.tapifolti.facetest.apicall;
+package com.tapifolti.facetest.microsoft.apicall;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -19,7 +19,7 @@ import java.net.URI;
  * Created by tapifolti on 2/22/2017.
  */
 // This sample uses the Apache HTTP client from HTTP Components (http://hc.apache.org/httpcomponents-client-ga/)
-public class ApacheHttpTrainGroupAPICall {
+public class TrainGroupAPICall {
 
     public static boolean trainGroup(String group)
     {

@@ -1,4 +1,4 @@
-package com.tapifolti.facetest.detect;
+package com.tapifolti.facetest.microsoft.detect;
 
 import com.tapifolti.facetest.folder.FolderProcessor;
 
@@ -13,7 +13,7 @@ public class Detect {
     public static void main(String[] args) {
 
         if (args.length < 1 || args.length > 3) {
-            System.out.println("com.tapifolti.facetest.detect.Detect rootFolder [excludeFolderPattern] [excludeFilePattern]");
+            System.out.println("com.tapifolti.facetest.microsoft.detect.Detect rootFolder [excludeFolderPattern] [excludeFilePattern]");
             return;
         }
         String excludeFolderPattern = "";
