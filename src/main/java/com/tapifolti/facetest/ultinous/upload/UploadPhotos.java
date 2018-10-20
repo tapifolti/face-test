@@ -21,7 +21,7 @@ public class UploadPhotos {
         }
         UploadPhotosFolderProcessor processor = new UploadPhotosFolderProcessor(excludeFolderPattern, excludeFilePattern);
         FolderProcessor.ProcessedResult result = processor.process(Paths.get(args[0]));
-        // TODO check if succ 
+        // TODO check if succ
     }
 }
 
